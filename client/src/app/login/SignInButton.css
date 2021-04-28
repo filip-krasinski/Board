@@ -1,0 +1,67 @@
+.singIn-button {
+    width: 100%;
+    margin-top: 5px;
+    height: 35px;
+    border-width: 0;
+    background: white;
+    color: #737373;
+    border-radius: 5px;
+    white-space: nowrap;
+    box-shadow: 1px 1px 0 1px rgba(0, 0, 0, 0.05);
+    transition-property: background-color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease-in-out;
+    padding: 0;
+}
+
+.singIn-button:focus, .singIn-button:hover {
+    box-shadow: 5px 4px 3px 2px rgba(0, 0, 0, 0.1);
+}
+
+.singIn-button:active {
+    background-color: #e5e5e5;
+    box-shadow: none;
+    transition-duration: 10ms;
+}
+.singIn-button__icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 8px 0 8px 8px;
+    width: 18px;
+    height: 18px;
+    box-sizing: border-box;
+}
+.singIn-button__icon--plus {
+    width: 27px;
+}
+
+.singIn-button__text {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Roboto', arial, sans-serif;
+}
+
+button ~ button {
+    margin-left: 20px;
+}
+
+.flex-column-item-ignore {
+    width: 100%;
+    color:  #aaaaaa;
+    cursor: pointer;
+    display: inline-flex;
+}
+
+
+
+@media (max-width: 1200px) and (min-width: 769px) {
+    .flex-column-item-ignore {
+        text-align: center;
+    }
+    .singIn-button__text {
+        display: none;
+    }
+}

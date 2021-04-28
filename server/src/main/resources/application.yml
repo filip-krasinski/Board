@@ -1,0 +1,42 @@
+#spring.servlet.multipart.max-file-size=128KB
+#spring.servlet.multipart.max-request-size=128KB
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 256KB
+      max-request-size: 256KB
+  datasource:
+    url: jdbc:mysql://localhost:3306/spring
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: {yourclientid}
+            clientSecret: {yourclientsecret}
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - user:email
+              - read:user
+
+app:
+  auth:
+    # Secret token used to generate JWT tokens
+    tokenSecret: {yourSecret}
+    # Time in milliseconds after which JWT token is going to expire
+    tokenExpirationMillis: 864000000
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - http://localhost:3001/oauth2/redirect
