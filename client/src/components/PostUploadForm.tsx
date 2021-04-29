@@ -1,13 +1,12 @@
 import React, { createRef} from 'react'
-import Api from '../api/Api';
-import './PostUploadForm.css'
-import {useDropzone} from 'react-dropzone';
+import {useDropzone} from 'react-dropzone'
+import Agent from '../api/Agent'
+import './css/PostUploadForm.css'
 
 export const PostUploadForm: React.FC = () => {
-    const submitRef = createRef<HTMLDivElement>();
-    const titleRef = createRef<HTMLInputElement>();
-
     const {getRootProps, getInputProps, acceptedFiles} = useDropzone()
+    const submitRef = createRef<HTMLDivElement>();
+    const titleRef  = createRef<HTMLInputElement>();
 
     const post = () => {
         const formData = new FormData();
@@ -18,7 +17,7 @@ export const PostUploadForm: React.FC = () => {
         formData.append('file', acceptedFiles[0])
         formData.append('title', title)
 
-        Api.Post.upload(formData)
+        Agent.Post.upload(formData)
     }
 
     const files = acceptedFiles.map((file, index) => (
@@ -48,7 +47,7 @@ export const PostUploadForm: React.FC = () => {
                         <p>or</p>
                         <p>Browse files</p>
                     </div>
-                    ) : (
+                ) : (
                     <div className='input-preview'>
                         {files}
                     </div>

@@ -1,4 +1,4 @@
-@import url('http://fonts.cdnfonts.com/css/aquire');
+
 :root {
 
 }
@@ -12,12 +12,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-  monospace;
-}
-
-
 #root {
   height: 100%;
   overflow: hidden;
@@ -29,42 +23,32 @@ code {
   flex-wrap: wrap;
 }
 
-/*
-
-
-G R I D
-
-
-*/
 .my-masonry-grid {
-  display: -webkit-box; /* Not needed if autoprefixing */
-  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  margin-left: -30px; /* gutter size offset */
+  margin-left: -30px;
   width: auto;
 }
 
 .my-masonry-grid_column {
-  padding-left: 30px; /* gutter size */
+  padding-left: 30px;
   background-clip: padding-box;
 }
 
-/* Style your items */
-.my-masonry-grid_column > div { /* change div to reference your elements you put in <Masonry> */
+.my-masonry-grid_column > div {
   margin-bottom: 30px;
 }
 
-
-/* Optional, different gutter size on mobile */
 @media (max-width: 800px) {
   .my-masonry-grid {
-    margin-left: -15px; /* gutter size offset */
+    margin-left: -15px;
   }
   .my-masonry-grid_column {
-    padding-left: 15px; /* gutter size offset */
+    padding-left: 15px;
   }
   .my-masonry-grid_column > div {
-    margin-bottom: 15px; /* space between items */
+    margin-bottom: 15px;
   }
 }
 
@@ -90,12 +74,6 @@ G R I D
   filter: blur(1px) brightness(0.5);
 }
 
-.fixed {
-  position: fixed;
-  width: 15%;
-  height: 100vh;
-}
-
 .main {
   flex-basis: 0;
   flex-grow: 999;
@@ -103,88 +81,12 @@ G R I D
   text-align: center;
 }
 
-.sidebar {
-  flex-grow: 1;
-  flex-basis: 15%;
-  background: #fefefe;
-  border-right: 3px solid #F2F2F2;
-  transition: 0.3s;
-  max-width: 30ch;
-}
-
-.fixed {
-  max-width: 30ch;
-}
-
-.user-avatar {
-  margin-top: 5em;
-  padding: 0;
-  width: 100%;
-  text-align: center;
-  justify-content: center;
-}
-
-.user-avatar img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-}
-
-.user-email {
-  display: flex;
-  font-weight: 700;
-  font-size: 1vmin;
-  text-align: center;
-  justify-content: center;
-  word-break: break-all;
-}
-
 .main .hide {
   flex-basis: 0;
   display: none;
 }
 
-.hamburger {
-  display: none;
-  font-weight: 700;
-  font-size: 2em;
-  position: fixed;
-  top: 1em !important;
-  left: 1em !important;
-  color: red;
-  transition: 0.3s;
-}
-
-.close {
-  z-index: 9999;
-  left: unset !important;
-  right: 1em;
-  transition: 0.3s;
-}
-
-.show {
-  position: fixed !important;
-  width: 100%;
-  height: 100vh;
-  background: #fff;
-  transition: 0.3s;
-  left: 0 !important;
-}
-
 @media (max-width: 768px) {
-  .sidebar > .fixed {
-    width: 100% !important;
-  }
-
-  .hamburger {
-    display: block;
-  }
-
-  .sidebar {
-    position: absolute;
-    left: -100%;
-  }
-
   .main {
     transition: 0.3s;
   }
@@ -193,145 +95,4 @@ G R I D
     margin: 3em;
   }
 
-  .sidebar {
-    max-width: 100%;
-  }
-
-  .fixed {
-    max-width: 100%;
-  }
-
-  .user-email {
-    font-size: 2em;
-  }
-
-  .user-avatar > img {
-    width: 96px;
-    height: 96px;
-  }
-
 }
-
-@media (max-width: 1550px) {
-  .sidebar-logo {
-    font-weight: 500;
-    font-size: 4vmin  !important;
-  }
-}
-@media (max-width: 1200px) and (min-width: 769px) {
-  .icon-text {
-    display: none;
-  }
-
-  .user-email {
-    display: none;
-  }
-
-  .sidebar-logo {
-    display: none;
-  }
-
-  .sidebar {
-    flex-basis: 8%;
-  }
-
-  .user-avatar {
-    margin-top: 5em;
-    padding: 0;
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .user-avatar img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-  }
-
-  .fixed {
-    width: 8% !important;
-  }
-
-  .flex-column-item {
-    justify-content: center;
-  }
-
-  .flex-column-item a {
-    text-align: center;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.flex-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.flex-column-item {
-  color:  #aaaaaa;
-  cursor: pointer;
-  display: inline-flex;
-}
-
-.flex-column-item:hover {
-  background: #dddddd;
-  transition: all 0.3s;
-}
-
-a {
-  width: 100%;
-  padding: 1em;
-  color:  black;
-  text-decoration: none;
-}
-
-.sidebar-line {
-  border-bottom: 3px solid #F2F2F2;
-  margin: 1em;
-}
-
-.icon {
-  color: #ff3377;
-  padding: 0.5em;
-  display: inline-flex;
-  border-radius: 10%;
-}
-
-.sidebar-logo {
-  margin-top: 0.5em;
-  font-family: 'Aquire', sans-serif;
-  font-weight: 900;
-  font-size: 5vmin;
-  color: #d11141;
-  text-align: center;
-}
-
-.logout {
-  position: relative;
-}
-
-.logout2 {
-  position: absolute;
-  bottom: 0;
-}
-
-

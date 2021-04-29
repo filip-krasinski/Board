@@ -1,73 +1,57 @@
-import Api from './api/Api';
-import { IAuthUser } from './model/IAuthUser';
-import { PostsList } from './post/PostsList';
-import { Route, Switch} from 'react-router-dom'
-import React, { useEffect, useState } from 'react';
-import { SidebarMenu } from './sidebar/SidebarMenu';
-import { PostUploadForm } from './post/PostUploadForm';
-import { OAuth2RedirectHandler } from './OAuth2RedirectHandler';
-import { AuthRoute } from './routes/AuthRoute';
-import { createBrowserHistory } from 'history';
-import { NotFound } from './404/NotFound';
+import React, { useContext, useEffect } from 'react';
+import { Context } from './Store';
+import { Route, Router, Switch } from 'react-router-dom';
+import Agent from '../api/Agent';
+import { OAuth2RedirectHandler } from '../api/Oauth2RedirectHandler';
+import { Sidebar } from '../components/Sidebar';
+import { PostUploadForm } from '../components/PostUploadForm';
+import { AuthRoute } from '../routes/AuthRoute';
+import { history } from './history';
+import { PostsList } from '../components/PostList';
+import { LogoutRoute } from '../routes/LogoutRoute';
+import { NotFound } from '../components/NotFound';
 
-interface RootObject {
-    currentUser: IAuthUser | null;
-    loading: boolean;
-}
+const App = () => {
+    const {state, dispatch} = useContext(Context);
 
-
-export const history = createBrowserHistory();
-
-const App: React.FC = () => {
-    const [state, setState] = useState<RootObject>({
-        currentUser: null,
-        loading: true
-    });
-
-    const logout = () => {
-        localStorage.removeItem('accessToken');
-        setState(prevState => ({...prevState, currentUser: null}));
-    }
-
-    const loadCurrentUser = async() => {
-        setState(prevState => ({...prevState, loading: true}));
+    const load = async() => {
+        dispatch({type: 'SET_LOADING', payload: true});
 
         try {
-            const res = await Api.User.current()
-            setState(prevState => ({
-                ...prevState,
-                currentUser: res,
-                loading: false
-            }));
+            const iAuthUser = await Agent.User.current()
+            dispatch({type: 'SET_CURRENT_USER', payload: iAuthUser});
         } catch (error) {
             console.log(error)
-            setState(prevState => ({...prevState, loading: false}));
         }
+
+        dispatch({type: 'SET_LOADING', payload: false});
     }
 
     useEffect(() => {
-        loadCurrentUser()
+        load()
     }, [])
 
-    console.log(state)
     return (
-        <>
+        <div>
             {!state.loading ? (
-                <div>
-                    <SidebarMenu user={state.currentUser} logout={logout}/>
-                    <div className='main'>
-                        <Switch>
-                            <Route exact path='/' component={PostsList}/>
-                            <AuthRoute exact path='/add_post' authenticated={state.currentUser} component={PostUploadForm}/>
-                            <Route path='/oauth2/redirect' render={() =>
-                                <OAuth2RedirectHandler update={setState}/>
-                            }/>
-                            <Route component={NotFound} />
-                        </Switch>
-                    </div>
-                </div>
-            ) : 'Loading'}
-        </>
+                <>
+                    <Router history={history}>
+                        <Sidebar />
+                        <div className='main'>
+                            <Switch>
+                                <Route exact path='/' component={PostsList} />
+                                <LogoutRoute exact path='/logout' />
+                                <AuthRoute exact path='/add_post' component={PostUploadForm} />
+                                <Route exact path='/oauth2/redirect' component={OAuth2RedirectHandler} />
+                                <Route component={NotFound} />
+                            </Switch>
+                        </div>
+                    </Router>
+                </>
+            ) : (
+                'Loading'
+            )}
+        </div>
     )
 }
 

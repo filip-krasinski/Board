@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { IAuthUser } from '../model/IAuthUser';
-import { IPost } from '../model/IPost';
+import { IPost } from '../model/IPoast';
 
-axios.defaults.baseURL = 'http://localhost:8080'
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 axios.interceptors.request.use((config) => {
     const token = localStorage.getItem('accessToken');
@@ -17,7 +17,7 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use(undefined, error => {
     const {status} = error.response;
-    if(status === 401) {
+    if (status === 401) {
         console.log(401)
     }
     throw error.response
@@ -41,7 +41,6 @@ const Post = {
 }
 
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default {
     User,
     Post

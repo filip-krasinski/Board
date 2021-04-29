@@ -53,14 +53,16 @@ button ~ button {
     color:  #aaaaaa;
     cursor: pointer;
     display: inline-flex;
+    margin-left: 1em;
 }
-
-
 
 @media (max-width: 1200px) and (min-width: 769px) {
     .flex-column-item-ignore {
         text-align: center;
+        margin-left: unset;
+        justify-content: center;
     }
+
     .singIn-button__text {
         display: none;
     }

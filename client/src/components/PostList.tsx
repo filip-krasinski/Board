@@ -1,8 +1,8 @@
-import Api from '../api/Api';
 import { useEffect, useState } from 'react';
-import { IPost } from '../model/IPost';
 import InfiniteScroll from "react-infinite-scroll-component";
 import Masonry from 'react-masonry-css'
+import { IPost } from '../model/IPoast';
+import Agent from '../api/Agent';
 
 let offset = 0;
 const breakpointColumnsObj = {
@@ -21,7 +21,7 @@ export const PostsList = () => {
     const [posts, setPosts] = useState<IPost[]>([]);
 
     const fetchData = async() => {
-        return await Api.Post.getList(offset++, 20);
+        return await Agent.Post.getList(offset++, 20);
     };
 
     useEffect(() => {

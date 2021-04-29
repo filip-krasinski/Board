@@ -1,16 +1,16 @@
 import React from 'react';
-import './SignInButton.css'
+import './css/SignInButton.css'
 
 interface IProps {
     icon: any,
     text: string,
-    redirect: string
+    href: string
 }
 
-export const SignInButton: React.FC<IProps> = ({ icon, text, redirect}) => {
+export const SignInButton: React.FC<IProps> = ({ icon, text, href}) => {
     return (
         <div className='flex-column-item-ignore'>
-            <a className='width-reset' href={redirect}>
+            <a className='width-reset' href={href}>
                 <div className='singIn-button'>
                     <div className='singIn-button__icon'>
                         {icon}
