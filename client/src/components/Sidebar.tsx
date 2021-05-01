@@ -8,7 +8,6 @@ import { SidebarOption } from './SidebarOption';
 import { SignInButton } from './SignInButton';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { ImCross } from 'react-icons/im'
-import './css/Sidebar.css'
 
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -47,23 +46,23 @@ export const Sidebar: React.FC = () => {
             </div>
 
             <div ref={domRef} className='sidebar'>
-                <div className='fixed'>
-                    <div className='flex-column'>
-                        <div className='sidebar-logo'>
+                <div className='sidebar_fixed'>
+                    <div className='sidebar-column'>
+                        <div className='sidebar_logo'>
                             Board
                         </div>
 
                         {state.currentUser ? (
                             <>
-                                <div className='user-avatar'>
+                                <div className='sidebar-user_avatar'>
                                     <img alt="" src={state.currentUser.avatarUrl} />
                                 </div>
 
-                                <div className='user-email'>{state.currentUser.email}</div>
+                                <div className='sidebar-user_email'>{state.currentUser.email}</div>
                             </>
                         ) : null}
 
-                        <span className='sidebar-line' />
+                        <span className='sidebar_hline' />
 
 
                         <SidebarOption icon={<ImHome        />}  text='Home'    href='/'          />
@@ -72,8 +71,8 @@ export const Sidebar: React.FC = () => {
 
                         {state.currentUser ? (
                             <>
-                                <SidebarOption icon={<CgProfile  />}  text='Profile'  href='/TODO'     />
-                                <SidebarOption icon={<FiSettings />}  text='Settings' href='/TODO'     />
+                                <SidebarOption icon={<CgProfile  />}  text='Profile'  href={`/profile/${state.currentUser.id}`}     />
+                                <SidebarOption icon={<FiSettings />}  text='Settings' href='/TODO' />
                                 <SidebarOption icon={<FiSettings />}  text='Logout'   href='/logout'   />
                             </>
                         ) : (

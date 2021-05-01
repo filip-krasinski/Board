@@ -35,7 +35,7 @@ public class PostController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("post/")
+    @GetMapping("post")
     public Post getPost(@RequestParam Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("post not found"));
@@ -52,7 +52,7 @@ public class PostController {
     }
 
     @PostMapping("post/add")
-    public void addPost(
+    public Post addPost(
             @RequestParam String title,
             @RequestParam("file") MultipartFile file,
             @CurrentUser CustomUserDetails customUserDetails
@@ -67,5 +67,6 @@ public class PostController {
         posts.add(saved);
         userRepository.save(user);
         storageService.store(file, saved.getId() + "." + ext);
+        return saved;
     }
 }

@@ -1,0 +1,53 @@
+.masonry-grid {
+  display: flex;
+  width: auto;
+  margin-left: -30px;
+
+  @media (max-width: 800px) {
+    margin-left: -15px;
+  }
+
+  &_wrapper {
+    margin: 5em;
+
+    @media (max-width: 800px) {
+      margin: 3em;
+    }
+  }
+
+  &_item {
+    max-height: 50rem;
+    overflow: hidden;
+    border-radius: 16px;
+    cursor: zoom-in;
+    transition: 0.3s;
+
+    &:hover {
+      filter: blur(1px) brightness(0.5);
+    }
+
+    >img {
+      height: auto;
+      max-width: 100%;
+      z-index: -1;
+    }
+
+  }
+
+  &_column {
+    padding-left: 30px;
+    background-clip: padding-box;
+
+    @media (max-width: 800px) {
+      padding-left: 15px;
+    }
+
+    > div {
+      margin-bottom: 30px;
+
+      @media (max-width: 800px) {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}

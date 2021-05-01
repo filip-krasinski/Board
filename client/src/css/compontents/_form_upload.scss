@@ -1,0 +1,65 @@
+.upload-form {
+  padding: 5em 10em 10em 10em;
+  border-radius: 5%;
+  box-shadow: 0.2px 0.2px 0.2px 3px #aaaaaa;
+  background: #fefefe;
+
+  &_wrapper {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  &_title {
+    font-size: 3em;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3em;
+  }
+
+  &-input {
+
+    &_submit {
+      margin-top: 1em;
+      width: 100%;
+    }
+
+    &_file {
+      border: 3px #d11141 dashed;
+      cursor: pointer;
+    }
+
+    &_preview {
+      img {
+        max-width: 500px;
+        max-height: 500px;
+      }
+    }
+
+    &_title {
+        color: #d11141;
+        margin-bottom: 1em;
+        position: relative;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: 18px;
+        border:  1px solid;
+        border-color: transparent transparent gray;
+        background-color: transparent;
+        width: 100%;
+
+      &:focus{
+        outline: none;
+      }
+
+      &::placeholder {
+        color: #d11141;
+        opacity: 1;
+      }
+    }
+
+  }
+
+}

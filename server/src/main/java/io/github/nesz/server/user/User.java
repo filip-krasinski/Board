@@ -11,7 +11,6 @@ import java.util.List;
 @Table(uniqueConstraints = {
     @UniqueConstraint(columnNames = "email")
 })
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
     @Id
@@ -26,6 +25,10 @@ public class User {
     @OneToMany
     @JsonIgnoreProperties({"author"})
     private List<Post> posts;
+
+    @OneToMany
+    @JsonIgnoreProperties({"author"})
+    private List<Post> pinned;
 
 
     public Long getId() {
@@ -78,5 +81,13 @@ public class User {
 
     public void addPost(Post post) {
         this.posts.add(post);
+    }
+
+    public List<Post> getPinned() {
+        return pinned;
+    }
+
+    public void setPinned(List<Post> pinned) {
+        this.pinned = pinned;
     }
 }

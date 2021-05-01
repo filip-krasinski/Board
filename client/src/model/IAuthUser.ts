@@ -1,4 +1,5 @@
 export interface IAuthUser {
+    id: number,
     authProvider: string,
     avatarUrl: string,
     email: string,

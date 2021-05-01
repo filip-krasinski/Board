@@ -1,0 +1,24 @@
+.hamburger {
+  font-weight: 700;
+  font-size: 2em;
+  color: red;
+  display: none;
+  position: fixed;
+  top : 1em !important;
+  left: 1em !important;
+  transition: 0.3s;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+
+  &.close {
+    right: 1em;
+    z-index: 9999;
+    left: unset !important;
+    transition: 0.3s;
+  }
+
+
+
+}
