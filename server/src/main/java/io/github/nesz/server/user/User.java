@@ -87,6 +87,14 @@ public class User {
         return pinned;
     }
 
+    public void pinPost(Post post) {
+        this.pinned.add(post);
+    }
+
+    public void unpinPost(Post post) {
+        this.pinned.add(post);
+    }
+
     public void setPinned(List<Post> pinned) {
         this.pinned = pinned;
     }

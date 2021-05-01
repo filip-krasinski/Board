@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface IProps {
     icon: any,
@@ -8,7 +8,6 @@ interface IProps {
 }
 
 export const SidebarOption: React.FC<IProps> = ({ icon, href, text }) => {
-    const history = useHistory();
     return (
         <div className='sidebar-column-item'>
             <Link className='sidebar-column-item_redirect' to={href}>

@@ -110,11 +110,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(
                         "/v3/api-docs**",
                         "/swagger-ui/**",
-                            "/swagger**",
-                            "/swagger-resources/**",
-                            "/swagger-ui.html",
-                            "/v2/api-docs",
-                            "/webjars/**",
+                        "/swagger**",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/v2/api-docs",
+                        "/webjars/**",
                         "/img/**",
                         "/post/get*"
                         )

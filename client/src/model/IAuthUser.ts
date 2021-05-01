@@ -4,7 +4,8 @@ export interface IAuthUser {
     avatarUrl: string,
     email: string,
     name: string,
-    posts: IAuthUserPost[]
+    posts: IAuthUserPost[],
+    pinned: IAuthUserPost[],
 }
 
 export interface IAuthUserPost {

@@ -27,6 +27,7 @@ axios.interceptors.response.use(undefined, error => {
 const responseBody = (response: AxiosResponse) => response.data;
 const requests = {
     get: (url: string) => axios.get(url).then(responseBody),
+    post: (url: string, params: any) => axios.post(url, null, {params: params}).then(responseBody),
     getParams: (url: string, params: any) => axios.get(url, {params: params}).then(responseBody),
     postForm: (url: string, data: FormData) => axios.post(url, data).then(responseBody),
 
@@ -35,6 +36,8 @@ const requests = {
 const User = {
     current: (): Promise<IAuthUser> => requests.get('/user/me'),
     get: (id: string): Promise<IAuthUser> => requests.getParams('/user', {id: id}),
+    pin: (postId: number) => requests.post('/user/pin', {postId: postId}),
+    unpin: (postId: number) => requests.post('/user/unpin', {postId: postId}),
 }
 
 const Post = {

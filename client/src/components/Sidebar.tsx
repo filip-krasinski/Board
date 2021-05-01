@@ -18,7 +18,6 @@ export const Sidebar: React.FC = () => {
     const [isOpened, setOpened] = useState<boolean>(false)
     const domRef = createRef<HTMLDivElement>();
     const burgerRef = createRef<HTMLDivElement>();
-    console.log("SIDEBAR RERENDER")
 
     return (
         <>
