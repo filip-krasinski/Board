@@ -22,6 +22,7 @@
     border-radius: 16px;
     cursor: zoom-in;
     transition: .3s;
+    margin-bottom: 15px;
 
 
     &:hover &-overlay {
@@ -36,7 +37,7 @@
 
     img {
       height: auto;
-      max-width: 100%;
+      width: 100%;
       z-index: -1;
       transition: .3s;
     }

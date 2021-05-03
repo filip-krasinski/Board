@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import Store, { Context } from './Store';
+import { Context } from './Store';
 import { Route, Router, Switch } from 'react-router-dom';
 import Agent from '../api/Agent';
 import { OAuth2RedirectHandler } from '../api/Oauth2RedirectHandler';
@@ -7,7 +7,7 @@ import { Sidebar } from '../components/Sidebar';
 import { PostUploadForm } from '../components/PostUploadForm';
 import { AuthRoute } from '../routes/AuthRoute';
 import { history } from './history';
-import { PostsList } from '../components/PostList';
+import { PostsGrid } from '../components/PostsGrid';
 import { LogoutRoute } from '../routes/LogoutRoute';
 import { NotFound } from '../components/NotFound';
 import { Post } from '../components/Post';
@@ -18,22 +18,21 @@ import { Profile } from '../components/Profile';
 const App = () => {
     const {state, dispatch} = useContext(Context);
 
-    const load = async() => {
-        dispatch({type: 'SET_LOADING', payload: true});
-
-        try {
-            const iAuthUser = await Agent.User.current()
-            dispatch({type: 'SET_CURRENT_USER', payload: iAuthUser});
-        } catch (error) {
-            console.log(error)
-        }
-
-        dispatch({type: 'SET_LOADING', payload: false});
-    }
-
     useEffect(() => {
+        const load = async() => {
+            dispatch({type: 'SET_LOADING', payload: true});
+
+            try {
+                const iAuthUser = await Agent.User.current()
+                dispatch({type: 'SET_CURRENT_USER', payload: iAuthUser});
+            } catch (error) {
+                console.log(error)
+            }
+
+            dispatch({type: 'SET_LOADING', payload: false});
+        }
         load()
-    }, [])
+    }, [dispatch])
 
     return (
         <>
@@ -47,7 +46,7 @@ const App = () => {
                             <Sidebar />
                             <div className='main'>
                                 <Switch>
-                                    <Route exact path='/' component={PostsList} />
+                                    <Route exact path='/' component={PostsGrid} />
                                     <Route exact path='/post/:id' component={Post} />
                                     <Route exact path='/profile/:id' component={Profile} />
                                     <Route exact path='/oauth2/redirect' component={OAuth2RedirectHandler} />

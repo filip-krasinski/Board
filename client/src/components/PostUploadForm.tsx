@@ -17,7 +17,7 @@ export const PostUploadForm: React.FC = () => {
         const formData = new FormData();
         const title = titleRef.current?.value;
 
-        if (title === null || title === undefined || !title.trim().length) {
+        if (!title ||  !title.trim().length) {
             toast.error('title cannot be empty!')
             return
         }

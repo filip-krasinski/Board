@@ -14,7 +14,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 const APP_URL = process.env.REACT_APP_APP_URL;
 
 export const Sidebar: React.FC = () => {
-    const {state, dispatch} = useContext(Context);
+    const {state} = useContext(Context);
     const [isOpened, setOpened] = useState<boolean>(false)
     const domRef = createRef<HTMLDivElement>();
     const burgerRef = createRef<HTMLDivElement>();

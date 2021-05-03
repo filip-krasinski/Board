@@ -45,6 +45,19 @@ public class UserController {
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
         user.pinPost(post);
+        post.addPinFrom(user);
+        userRepository.save(user);
+    }
+
+    @PostMapping("user/unpin")
+    public void unpinPost(@CurrentUser CustomUserDetails details, @RequestParam Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("post not found"));
+
+        User user = userRepository.findById(details.getId())
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        user.unpinPost(post);
         userRepository.save(user);
     }
 }

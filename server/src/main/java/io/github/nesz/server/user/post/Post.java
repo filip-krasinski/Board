@@ -3,11 +3,15 @@ package io.github.nesz.server.user.post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.github.nesz.server.user.User;
+import io.github.nesz.server.user.comment.Comment;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 public class Post {
@@ -24,21 +28,44 @@ public class Post {
     @JsonIgnoreProperties({"posts"})
     private User author;
 
+    @ManyToMany
+    @JsonIgnoreProperties({"posts", "pinned"})
+    private List<User> pinnedBy;
+
+    @OneToMany
+    @JsonIgnoreProperties({"parent"})
+    private List<Comment> comments;
+
     public Post() { }
 
-    public Post(Long id, String title, String imageExtension, LocalDateTime uploadTime, User author) {
+    public Post(Long id, String title, LocalDateTime uploadTime, String imageExtension,
+                User author, List<User> pinnedBy, List<Comment> comments) {
         this.id = id;
         this.title = title;
-        this.author = author;
         this.uploadTime = uploadTime;
         this.imageExtension = imageExtension;
+        this.author = author;
+        this.pinnedBy = pinnedBy;
+        this.comments = comments;
     }
 
-    public Post(String title, String imageExtension, LocalDateTime uploadTime, User author) {
+    public Post(String title, LocalDateTime uploadTime, String imageExtension,
+                User author, List<User> pinnedBy, List<Comment> comments) {
         this.title = title;
-        this.author = author;
         this.uploadTime = uploadTime;
         this.imageExtension = imageExtension;
+        this.author = author;
+        this.pinnedBy = pinnedBy;
+        this.comments = comments;
+    }
+
+    public Post(String title, LocalDateTime uploadTime, String imageExtension, User author) {
+        this.title = title;
+        this.uploadTime = uploadTime;
+        this.imageExtension = imageExtension;
+        this.author = author;
+        this.pinnedBy = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 
     public Long getId() {
@@ -84,5 +111,29 @@ public class Post {
 
     public void setUploadTime(LocalDateTime uploadTime) {
         this.uploadTime = uploadTime;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<User> getPinnedBy() {
+        return pinnedBy;
+    }
+
+    public void setPinnedBy(List<User> pinnedBy) {
+        this.pinnedBy = pinnedBy;
+    }
+
+    public void addPinFrom(User user) {
+        this.pinnedBy.add(user);
     }
 }

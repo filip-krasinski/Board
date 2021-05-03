@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext} from 'react';
 import { Redirect, Route} from 'react-router-dom';
 import Store, { Context } from '../app/Store';
 
 // @ts-ignore
 export const AuthRoute = ({ component: Component, ...rest }) => {
-    const {state, dispatch} = useContext(Context);
+    const {state} = useContext(Context);
 
     return (
         <Route

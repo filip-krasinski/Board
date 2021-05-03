@@ -4,6 +4,8 @@ import io.github.nesz.server.security.CurrentUser;
 import io.github.nesz.server.security.CustomUserDetails;
 import io.github.nesz.server.user.User;
 import io.github.nesz.server.user.UserRepository;
+import io.github.nesz.server.user.comment.Comment;
+import io.github.nesz.server.user.comment.CommentRepository;
 import io.github.nesz.server.user.storage.StorageService;
 import io.github.nesz.server.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,17 @@ public class PostController {
     private final PostRepository postRepository;
     private final StorageService storageService;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public PostController(PostRepository postRepository, StorageService storageService, UserRepository userRepository) {
+    public PostController(PostRepository postRepository,
+                          StorageService storageService,
+                          UserRepository userRepository,
+                          CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.storageService = storageService;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     @GetMapping("post")
@@ -51,6 +58,26 @@ public class PostController {
         return postRepository.findAll(pageable);
     }
 
+    @PostMapping("post/comments/add")
+    public Comment addComment(
+            @CurrentUser CustomUserDetails customUserDetails,
+            @RequestParam Long postId,
+            @RequestParam String content
+    ) {
+        User user = userRepository.findById(customUserDetails.getId())
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("post not found"));
+
+        Comment comment = new Comment(content, LocalDateTime.now(), post, user);
+
+        commentRepository.save(comment);
+        post.addComment(comment);
+        postRepository.save(post);
+        return comment;
+    }
+
     @PostMapping("post/add")
     public Post addPost(
             @RequestParam String title,
@@ -62,7 +89,7 @@ public class PostController {
 
 
         String ext = FileUtils.getExtension(file.getOriginalFilename());
-        Post saved = postRepository.save(new Post(title, ext, LocalDateTime.now(), user));
+        Post saved = postRepository.save(new Post(title, LocalDateTime.now(), ext, user));
         List<Post> posts = user.getPosts();
         posts.add(saved);
         userRepository.save(user);

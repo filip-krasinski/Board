@@ -8,7 +8,7 @@ export const LogoutRoute = ({ ...rest }) => {
     useEffect(() => {
         localStorage.removeItem('accessToken')
         dispatch({type: 'SET_CURRENT_USER', payload: null})
-    }, [])
+    }, [dispatch])
 
     return (
         <Route {...rest} render={props =>

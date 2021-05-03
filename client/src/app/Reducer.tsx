@@ -1,4 +1,4 @@
-import { IAuthUser } from '../model/IAuthUser';
+import { IAuthUser } from '../model/IUser';
 
 export interface State {
     currentUser: IAuthUser | null,

@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
-import { IAuthUser } from '../model/IAuthUser';
-import { IPost } from '../model/IPoast';
+import { IAuthUser } from '../model/IUser';
+import { IPost } from '../model/IPost';
+import { IComment } from '../model/IComment';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -14,15 +15,6 @@ axios.interceptors.request.use((config) => {
 }, (error) => {
     return Promise.reject(error);
 })
-
-/*
-axios.interceptors.response.use(undefined, error => {
-    const {status} = error.response;
-    if (status === 401) {
-        console.log(401)
-    }
-    throw error.response
-});*/
 
 const responseBody = (response: AxiosResponse) => response.data;
 const requests = {
@@ -44,7 +36,9 @@ const Post = {
     upload: (data: FormData): Promise<IPost> => requests.postForm('/post/add', data),
     get: (id: string): Promise<IPost> => requests.getParams('/post', {id: id}),
     getList: (page: number, size: number): Promise<IPost[]> =>
-        axios.get('/post/get', {params: {pageNumber: page, pageSize: size}}).then(res => res.data.content)
+        axios.get('/post/get', {params: {pageNumber: page, pageSize: size}}).then(res => res.data.content),
+    addComment: (postId: number, content: string): Promise<IComment> =>
+        requests.post('/post/comments/add', {postId: postId, content: content})
 }
 
 

@@ -1,7 +1,7 @@
-import React, { createRef, useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Masonry from 'react-masonry-css'
-import { IPost } from '../model/IPoast';
+import { IPost } from '../model/IPost';
 import Agent from '../api/Agent';
 import { Link } from 'react-router-dom';
 import { AiFillPushpin } from 'react-icons/ai';
@@ -22,12 +22,12 @@ const breakpointColumnsObj = {
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export const PostsList = () => {
-    const {state, dispatch} = useContext(Context);
+export const PostsGrid = () => {
+    const {state} = useContext(Context);
     const [posts, setPosts] = useState<IPost[]>([]);
 
     const fetchData = async () => {
-        return await Agent.Post.getList(offset++, 20);
+        return await Agent.Post.getList(offset++, 40);
     };
 
     const isPinned = (post: IPost) => {
@@ -76,9 +76,7 @@ export const PostsList = () => {
         fetchData().then(data => {
             if (isMounted) setPosts(arr => [...arr, ...data]);
         })
-        return () => {
-            isMounted = false
-        }
+        return () => { isMounted = false }
     }, [])
 
     return (
@@ -98,7 +96,7 @@ export const PostsList = () => {
                         posts.map(post =>
                             <Link key={post.id} to={`/post/${post.id}`}>
                                 <div className='masonry-grid-item'>
-                                    <img alt='' className='masonry-grid-item_bg' src={API_URL + '/img/' + post.imagePath}/>
+                                    <img alt='' className='masonry-grid-item_bg' src={`${API_URL}/img/${post.imagePath}`}/>
                                     <div className='masonry-grid-item-overlay'>
                                         <div className='top-row'>
                                             <span className='masonry-grid-item-overlay_avatar'
