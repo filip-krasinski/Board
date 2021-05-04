@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { IAuthUser } from '../model/IUser';
 import { IPost } from '../model/IPost';
 import { IComment } from '../model/IComment';
+import { IPaged } from '../model/IPaged';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -35,8 +36,8 @@ const User = {
 const Post = {
     upload: (data: FormData): Promise<IPost> => requests.postForm('/post/add', data),
     get: (id: string): Promise<IPost> => requests.getParams('/post', {id: id}),
-    getList: (page: number, size: number): Promise<IPost[]> =>
-        axios.get('/post/get', {params: {pageNumber: page, pageSize: size}}).then(res => res.data.content),
+    getList: (page: number, size: number): Promise<IPaged<IPost>> =>
+        axios.get('/post/get', {params: {pageNumber: page, pageSize: size}}).then(res => res.data),
     addComment: (postId: number, content: string): Promise<IComment> =>
         requests.post('/post/comments/add', {postId: postId, content: content})
 }

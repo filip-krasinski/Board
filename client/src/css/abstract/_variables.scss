@@ -1,0 +1,33 @@
+:root {
+  --colorPrimary: #fff;
+  --colorSecondary: #f7f7f7;
+  --colorText: #000;
+  --colorLogo: #d11141;
+  --colorSidebarIcon: #ff3377;
+  --colorButtons: #d11141;
+  --sidebarBorder: 3px solid #F2F2F2;
+  --sidebarHline: 3px solid #F2F2F2;
+  --shadowPost: rgb(0 0 0 / 10%) 0px 1px 20px 0px;
+  --socialsLineActive: 3px solid black;
+
+  --switcherTransform: 0px;
+  --switcherBackground: #000;
+  --switcherColor: #fff;
+}
+
+[data-theme="dark"] {
+  --colorPrimary: #090C11;
+  --colorSecondary: #0D1017;
+  --colorText: #98999f;
+  --colorLogo: #d11141;
+  --colorSidebarIcon: #ff3377;
+  --colorButtons: #d11141;
+  --sidebarBorder: 3px solid #0D1017;
+  --sidebarHline: 3px solid #0D1017;
+  --shadowPost: rgb(13 16 23) 0px 1px 20px 0px;
+  --socialsLineActive: 3px solid #2f3240;
+
+  --switcherTransform: 37px;
+  --switcherBackground: #fff;
+  --switcherColor: #000;
+}

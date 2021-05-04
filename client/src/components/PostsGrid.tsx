@@ -8,10 +8,14 @@ import { AiFillPushpin } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 import { Context } from '../app/Store';
 import { history } from '../app/history';
+import { Loading } from './Loading';
+import { IPaged } from '../model/IPaged';
 
 let offset = 0;
 const breakpointColumnsObj = {
-    default: 7,
+    default: 9,
+    2900: 8,
+    2500: 7,
     2100: 6,
     1700: 5,
     1400: 4,
@@ -24,7 +28,10 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 export const PostsGrid = () => {
     const {state} = useContext(Context);
-    const [posts, setPosts] = useState<IPost[]>([]);
+    const [posts, setPosts] = useState<IPaged<IPost>>({
+        content: [],
+        totalPages: 0
+    });
 
     const fetchData = async () => {
         return await Agent.Post.getList(offset++, 40);
@@ -72,19 +79,29 @@ export const PostsGrid = () => {
     }
 
     useEffect(() => {
+        offset = 0
         let isMounted = true;
         fetchData().then(data => {
-            if (isMounted) setPosts(arr => [...arr, ...data]);
+            if (isMounted) setPosts(old => {
+                data.content = [...old.content, ...data.content]
+                return data;
+            });
         })
         return () => { isMounted = false }
     }, [])
 
     return (
         <InfiniteScroll
-            dataLength={posts.length}
-            next={() => fetchData().then(data => setPosts(arr => [...arr, ...data]))}
-            hasMore={true}
-            loader={<h4>Loading...</h4>}
+            style={{
+                overflow: 'hidden'
+            }}
+            dataLength={posts.content.length}
+            next={() => fetchData().then(data => setPosts(old => {
+                data.content = [...old.content, ...data.content]
+                return data;
+            }))}
+            hasMore={offset !== posts.totalPages}
+            loader={<Loading />}
         >
             <div className='masonry-grid_wrapper'>
                 <Masonry
@@ -93,7 +110,7 @@ export const PostsGrid = () => {
                     columnClassName='masonry-grid_column'
                 >
                     {
-                        posts.map(post =>
+                        posts.content.map(post =>
                             <Link key={post.id} to={`/post/${post.id}`}>
                                 <div className='masonry-grid-item'>
                                     <img alt='' className='masonry-grid-item_bg' src={`${API_URL}/img/${post.imagePath}`}/>

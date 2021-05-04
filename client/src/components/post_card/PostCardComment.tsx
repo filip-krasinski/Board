@@ -17,7 +17,7 @@ export const PostCardComment: React.FC<IProps> = ({ comment }) => {
                 <img alt='' src={comment.author.avatarUrl}/>
             </div>
 
-                <div className='flex-column'>
+                <div className='flex-column post-right-comment-wrapper'>
                     <div>
                         <span className='post-right-comment-author'
                               onClick={() => history.push(`/profile/${comment.author.id}`)}

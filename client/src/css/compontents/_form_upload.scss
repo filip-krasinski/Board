@@ -1,8 +1,8 @@
 .upload-form {
   padding: 5em 10em 10em 10em;
   border-radius: 5%;
-  box-shadow: rgb(0 0 0 / 10%) 0px 1px 20px 0px;
-  background: #fefefe;
+  box-shadow: var(--shadowPost);
+  background: var(--colorPrimary);
 
   &_wrapper {
     height: 100vh;
@@ -13,6 +13,7 @@
   }
 
   &_title {
+    color: var(--colorText);
     font-size: 3em;
     font-weight: 600;
     display: block;
@@ -27,6 +28,7 @@
     }
 
     &_file {
+      color: var(--colorText);
       border: 3px #d11141 dashed;
       cursor: pointer;
     }
@@ -39,7 +41,7 @@
     }
 
     &_title {
-        color: #d11141;
+        color: var(--colorText);
         margin-bottom: 1em;
         position: relative;
         padding-top: 5px;
@@ -55,7 +57,7 @@
       }
 
       &::placeholder {
-        color: #d11141;
+        color: var(--colorText);
         opacity: 1;
       }
     }

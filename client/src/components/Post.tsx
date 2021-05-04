@@ -115,7 +115,7 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
                         </div>
                         <div className='post-right'>
 
-                            <div className='flex-column xd'>
+                            <div className='flex-column post-right-column'>
                                 <div className='flex-row'>
                                     <div className='post-right-author'>
                                         <div className='post-right-author-avatar'>

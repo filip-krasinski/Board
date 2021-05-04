@@ -15,10 +15,14 @@ import io.github.nesz.server.exceptions.StorageFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.imageio.ImageIO;
 
 @Service
 public class ImageStorageService implements StorageService {
@@ -36,18 +40,25 @@ public class ImageStorageService implements StorageService {
 			if (file.isEmpty()) {
 				throw new StorageException("Failed to store empty file.");
 			}
+
 			Path destinationFile = this.rootLocation.resolve(Paths.get(filename))
 					.normalize()
 					.toAbsolutePath();
 
-			if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-				// This is a security check
-				throw new StorageException(
-						"Cannot store file outside current directory.");
+			if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath()))
+				throw new StorageException("Cannot store file outside current directory.");
+
+			try (InputStream in = file.getInputStream()) {
+				try {
+					ImageIO.read(in);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Invalid image file.");
+				}
+
 			}
+
 			try (InputStream inputStream = file.getInputStream()) {
-				Files.copy(inputStream, destinationFile,
-					StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
 		catch (IOException e) {

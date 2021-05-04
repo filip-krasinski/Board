@@ -31,6 +31,11 @@ const App = () => {
 
             dispatch({type: 'SET_LOADING', payload: false});
         }
+        const setTheme = () => {
+            const theme = localStorage.getItem('theme');
+            if (theme) document.documentElement.setAttribute('data-theme', theme);
+        }
+        setTheme()
         load()
     }, [dispatch])
 

@@ -13,12 +13,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -65,10 +71,13 @@ public class PostController {
             @RequestParam String content
     ) {
         User user = userRepository.findById(customUserDetails.getId())
-                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("post not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        if (content.length() > 512)
+            throw new IllegalArgumentException("Comment is too long");
 
         Comment comment = new Comment(content, LocalDateTime.now(), post, user);
 
@@ -87,6 +96,8 @@ public class PostController {
         User user = userRepository.findById(customUserDetails.getId())
                 .orElseThrow(() -> new IllegalArgumentException("user not found"));
 
+        if (title.length() > 64)
+            throw new IllegalArgumentException("Title is too long");
 
         String ext = FileUtils.getExtension(file.getOriginalFilename());
         Post saved = postRepository.save(new Post(title, LocalDateTime.now(), ext, user));
