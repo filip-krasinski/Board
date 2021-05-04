@@ -3,6 +3,12 @@
   &-wrapper {
     width: 15%;
     max-width: 30ch;
+    @media (max-width: 1200px) and (min-width: 769px) {
+      width: 8% !important;
+    }
+    @media (max-width: 768px) {
+      width: unset;
+    }
   }
 
   position: fixed;

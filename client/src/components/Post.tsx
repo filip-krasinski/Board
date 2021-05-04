@@ -8,6 +8,10 @@ import { ButtonSubmit } from './ButtonSubmit';
 import { PostCardComment } from './post_card/PostCardComment';
 import { Context } from '../app/Store';
 import { PostCardPin } from './post_card/PostCardPin';
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
+import { Emoji } from 'emoji-mart/dist-es/utils/data';
+import Draggable from 'react-draggable';
 
 interface MatchParams {
     id: string;
@@ -31,7 +35,27 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
     const refSocialComments    = createRef<HTMLDivElement>();
     const inputRef             = createRef<HTMLTextAreaElement>();
     const btnRef               = createRef<HTMLButtonElement>();
+    const picker               = createRef<HTMLDivElement>();
     const [, setValue] = useState(0);
+
+    const toggleEmojiMenu = () => {
+        if (picker.current)
+            if (picker.current.style.display === 'none')
+                picker.current.style.display = 'block'
+            else
+                picker.current.style.display = 'none'
+    }
+
+    const emojiSelected = (emoji: Emoji) => {
+        if (inputRef.current) {
+            // @ts-ignore
+            let sym = emoji.unified.split('-')
+            let codesArray: any[] = []
+            sym.forEach(el => codesArray.push('0x' + el))
+            let finalEmoji = String.fromCodePoint(...codesArray)
+            inputRef.current.value += finalEmoji
+        }
+    }
 
     const forceUpdate = () => {
         setValue(old => old+1)
@@ -76,7 +100,7 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
         Agent.Post.addComment(post.id, content)
             .then(res => {
                 toast.success('Comment submitted!')
-                post.comments.push(res)
+                post.comments.splice(0, 0, res)
                 btnRef.current?.classList.remove('loading')
                 if (inputRef.current)
                     inputRef.current.value = ''
@@ -160,6 +184,7 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
                                                 <div className='post-right-input-avatar'>
                                                     <img alt='' src={post.author.avatarUrl}/>
                                                 </div>
+
                                                 <textarea
                                                     ref={inputRef}
                                                     onChange={(e) => onType(e)}
@@ -168,13 +193,28 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
                                                     maxLength={512}
                                                     required
                                                 />
+
                                             </div>
                                             <div className='flex-row post-right-input-submit'>
                                                 <div ref={counterRef} className='post-right-input-counter'>
                                                     0/512
                                                 </div>
-                                                <div className=''>
+                                                <div>
                                                     <ButtonSubmit ref={btnRef} text={'Submit'} onClick={() => postComment()} />
+                                                </div>
+                                                <div style={{position: 'relative'}}>
+
+                                                        <div ref={picker} style={{display:'none'}}>
+                                                            <Picker
+                                                                exclude={['flags']}
+                                                                title=''
+                                                                showSkinTones={false}
+                                                                showPreview={false}
+                                                                onClick={(emoji) => emojiSelected(emoji)}
+                                                                style={{ position: 'absolute', bottom: '120px', right: '0', }} />
+                                                        </div>
+
+                                                    <span onClick={() => toggleEmojiMenu()} className='emoji'>😊</span>
                                                 </div>
                                             </div>
                                         </div>

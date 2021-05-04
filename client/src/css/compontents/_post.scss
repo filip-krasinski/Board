@@ -7,6 +7,7 @@
   margin-right: 3em;
   width: auto;
   flex-shrink: 0.2;
+  height: 75%;
 
   @media (max-width: 1200px) {
     margin-top: 3em;
@@ -36,6 +37,9 @@
   &-left {
     flex-shrink: 1;
     padding: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     @media (max-width: 500px) {
       padding: 0;
@@ -43,7 +47,7 @@
     img {
       border-radius: 16px;
       max-width: 27em;
-      max-height: 1200px;
+      max-height: 100%;
 
       @media (max-width: 500px) {
         width: 100%;
@@ -74,7 +78,7 @@
       padding-top: 1em;
       margin-top: auto;
       margin-bottom: 1em;
-      width: 450px;
+      width: auto;
       height: 100px;
 
 
@@ -127,8 +131,7 @@
 
       &-list {
         height: 100%;
-        max-height: 600px;
-        overflow-y: scroll;
+        overflow-y: auto;
         align-items: flex-start;
 
         &::-webkit-scrollbar {
