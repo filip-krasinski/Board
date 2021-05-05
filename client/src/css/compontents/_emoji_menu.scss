@@ -1,0 +1,46 @@
+.emoji {
+  font-size: 2em;
+  cursor: pointer;
+  user-select: none;
+  filter: grayscale(80%);
+  transition: filter .5s;
+
+  &:hover {
+    filter: grayscale(0);
+    transition: filter .5s;
+  }
+
+  &-mart {
+    border: var(--emojiPickerBorder);
+    color: var(--colorText);
+    background: var(--colorPrimary);
+
+    &-category-label span {
+      background: var(--colorSecondary);
+    }
+
+    &-icon {
+      color: var(--colorText);
+    }
+
+    &-bar:first-child {
+      border-bottom-width: 0;
+    }
+
+    &-scroll {
+      &::-webkit-scrollbar {
+        width: 0.5rem;
+      }
+    }
+
+    &-search {
+      padding-bottom: 1em;
+
+      input {
+        border: var(--emojiPickerBorder);
+        color: var(--colorText);
+        background: var(--colorSecondary);
+      }
+    }
+  }
+}

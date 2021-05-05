@@ -11,32 +11,35 @@ import { PostCardPin } from './post_card/PostCardPin';
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import { Emoji } from 'emoji-mart/dist-es/utils/data';
-import Draggable from 'react-draggable';
+import useOnClickOutside from '../util/useOnClickOutside';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 interface MatchParams {
     id: string;
 }
-
-
-const API_URL = process.env.REACT_APP_API_URL;
-
 
 enum Social {
     COMMENTS,
     PINS
 }
 
-export const Post = ({match}: RouteComponentProps<MatchParams>) => {
-    const {state} = useContext(Context);
+export const Post = ({ match }: RouteComponentProps<MatchParams>) => {
+    const {state}              = useContext(Context);
     const [social, setSocial]  = useState<Social>(Social.COMMENTS)
-    const [post, setPost]      = useState<IPost | null>();
+    const [post, setPost]      = useState<IPost>();
     const counterRef           = createRef<HTMLDivElement>();
     const refSocialPins        = createRef<HTMLDivElement>();
     const refSocialComments    = createRef<HTMLDivElement>();
-    const inputRef             = createRef<HTMLTextAreaElement>();
-    const btnRef               = createRef<HTMLButtonElement>();
     const picker               = createRef<HTMLDivElement>();
-    const [, setValue] = useState(0);
+    const pickerWrapper        = createRef<HTMLDivElement>();
+    const btnRef               = createRef<HTMLButtonElement>();
+    const inputRef             = createRef<HTMLTextAreaElement>();
+
+    useOnClickOutside(pickerWrapper, () => {
+        if (picker.current)
+            picker.current.style.display = 'none'
+    });
 
     const toggleEmojiMenu = () => {
         if (picker.current)
@@ -53,12 +56,11 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
             let codesArray: any[] = []
             sym.forEach(el => codesArray.push('0x' + el))
             let finalEmoji = String.fromCodePoint(...codesArray)
-            inputRef.current.value += finalEmoji
+            if (inputRef.current.value.length + finalEmoji.length < 512) {
+                inputRef.current.value += finalEmoji
+                updateInput()
+            }
         }
-    }
-
-    const forceUpdate = () => {
-        setValue(old => old+1)
     }
 
     const switchSocial = (social: Social) => {
@@ -72,9 +74,9 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
         setSocial(social)
     }
 
-    const onType = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        if (counterRef.current)
-            counterRef.current.innerText = e.currentTarget.value.length + '/512';
+    const updateInput = () => {
+        if (counterRef.current && inputRef.current)
+            counterRef.current.innerText = inputRef.current.value.length + '/512';
     }
 
     const postComment = () => {
@@ -106,7 +108,11 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
                     inputRef.current.value = ''
                 if (counterRef.current)
                     counterRef.current.innerText = '0/512'
-                forceUpdate()
+
+                setPost(old => {
+                    if (old)
+                        return ({ ...old, id: 0})
+                })
             })
             .catch(err => {
                 toast.error("Failed to submit comment!");
@@ -174,36 +180,40 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
                                 </div>
 
 
-                                {Social.COMMENTS === social ? (
+                                {Social.PINS === social ? (
+                                    <div className='flex-column post-right-comment-list'>
+                                        {post.pinnedBy.map((com) => <PostCardPin key={com.id} user={com}/>)}
+                                    </div>
+                                ) : (
                                     <>
                                         <div className='flex-column post-right-comment-list'>
                                             {post.comments.map((com) => <PostCardComment key={com.id} comment={com}/>)}
                                         </div>
-                                        <div className='flex-column post-right-input'>
-                                            <div className='flex-row post-right-input'>
-                                                <div className='post-right-input-avatar'>
-                                                    <img alt='' src={post.author.avatarUrl}/>
-                                                </div>
+                                        {state.currentUser ? (
+                                            <div className='flex-column post-right-input'>
+                                                <div className='flex-row post-right-input'>
+                                                    <div className='post-right-input-avatar'>
+                                                        <img alt='' src={post.author.avatarUrl}/>
+                                                    </div>
 
-                                                <textarea
-                                                    ref={inputRef}
-                                                    onChange={(e) => onType(e)}
-                                                    name="comment"
-                                                    placeholder="Comment"
-                                                    maxLength={512}
-                                                    required
-                                                />
+                                                    <textarea
+                                                        ref={inputRef}
+                                                        onChange={() => updateInput()}
+                                                        name="comment"
+                                                        placeholder="Comment"
+                                                        maxLength={512}
+                                                        required
+                                                    />
 
-                                            </div>
-                                            <div className='flex-row post-right-input-submit'>
-                                                <div ref={counterRef} className='post-right-input-counter'>
-                                                    0/512
                                                 </div>
-                                                <div>
-                                                    <ButtonSubmit ref={btnRef} text={'Submit'} onClick={() => postComment()} />
-                                                </div>
-                                                <div style={{position: 'relative'}}>
-
+                                                <div className='flex-row post-right-input-submit'>
+                                                    <div ref={counterRef} className='post-right-input-counter'>
+                                                        0/512
+                                                    </div>
+                                                    <div>
+                                                        <ButtonSubmit ref={btnRef} text={'Submit'} onClick={() => postComment()} />
+                                                    </div>
+                                                    <div ref={pickerWrapper} style={{position: 'relative'}}>
                                                         <div ref={picker} style={{display:'none'}}>
                                                             <Picker
                                                                 exclude={['flags']}
@@ -214,17 +224,15 @@ export const Post = ({match}: RouteComponentProps<MatchParams>) => {
                                                                 style={{ position: 'absolute', bottom: '120px', right: '0', }} />
                                                         </div>
 
-                                                    <span onClick={() => toggleEmojiMenu()} className='emoji'>😊</span>
+                                                        <span onClick={(e) => {
+                                                            e.preventDefault()
+                                                            toggleEmojiMenu()
+                                                        }} className='emoji'>😊</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        ) : null }
                                     </>
-                                ) : (
-                                 <>
-                                     <div className='flex-column post-right-comment-list'>
-                                         {post.pinnedBy.map((com) => <PostCardPin key={com.id} user={com}/>)}
-                                     </div>
-                                 </>
                                 )}
 
                             </div>
