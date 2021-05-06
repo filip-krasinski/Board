@@ -1,6 +1,6 @@
 import { Picker } from 'emoji-mart';
 import { Emoji } from 'emoji-mart/dist-es/utils/data';
-import React, { createRef } from 'react';
+import React, { createRef, useState } from 'react';
 import useOnClickOutside from '../util/useOnClickOutside';
 
 interface IProps {
@@ -8,41 +8,31 @@ interface IProps {
 }
 
 const emojis: string[] = ['😊', '😂', '😇', '🥰', '🥶', '🥵', '👹', '💙']
+const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
 export const EmojiPicker: React.FC<IProps> = ({onSelect}) => {
-    const picker        = createRef<HTMLDivElement>();
+    const [isActive, setActive] = useState(false);
     const pickerWrapper = createRef<HTMLDivElement>();
 
-    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-
-    useOnClickOutside(pickerWrapper, () => {
-        if (picker.current)
-            picker.current.style.display = 'none'
-    });
-
-    const toggleEmojiMenu = () => {
-        if (picker.current)
-            if (picker.current.style.display === 'none')
-                picker.current.style.display = 'block'
-            else
-                picker.current.style.display = 'none'
-    }
+    useOnClickOutside(pickerWrapper, () => setActive(false));
 
     return (
         <div ref={pickerWrapper} style={{position: 'relative'}}>
-            <div ref={picker} style={{display:'none'}}>
+            {isActive ?
                 <Picker
                     exclude={['flags']}
                     title=''
                     showSkinTones={false}
                     showPreview={false}
                     onClick={(emoji) => onSelect(emoji)}
-                    style={{ position: 'absolute', bottom: '120px', right: '0', }} />
-            </div>
+                    style={{ position: 'absolute', bottom: '120px', right: '0' }}
+                />
+                : null
+            }
 
             <span onClick={(e) => {
                 e.preventDefault()
-                toggleEmojiMenu()
+                setActive(!isActive)
             }} className='emoji'>{randomEmoji}</span>
         </div>
     )

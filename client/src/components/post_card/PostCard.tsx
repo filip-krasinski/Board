@@ -28,8 +28,6 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
     const {state}              = useContext(Context);
     const [social, setSocial]  = useState<Social>(Social.COMMENTS)
     const [post, setPost]      = useState<IPost>();
-    const refSocialPins        = createRef<HTMLDivElement>();
-    const refSocialComments    = createRef<HTMLDivElement>();
     const buttonRef            = createRef<ElementRef<typeof ButtonSubmit>>();
     const commentInputRef      = createRef<ElementRef<typeof TextAreaWithCounter>>();
 
@@ -46,17 +44,6 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
                 commentInputRef.current.add(finalEmoji)
             }
         }
-    }
-
-    const switchSocial = (social: Social) => {
-        if (Social.COMMENTS === social) {
-            refSocialPins.current?.classList.remove('active');
-            refSocialComments.current?.classList.add('active');
-        } else {
-            refSocialPins.current?.classList.add('active');
-            refSocialComments.current?.classList.remove('active');
-        }
-        setSocial(social)
     }
 
     const postComment = () => {
@@ -152,16 +139,13 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
                                 </div>
 
                                 <div className='flex-row post-right-socials'>
-                                    <div className='post-right-socials-pins'
-                                         ref={refSocialPins}
-                                        onClick={() => switchSocial(Social.PINS)}
+                                    <div className={`post-right-socials-pins ${Social.PINS == social ? 'active' : ''}`}
+                                        onClick={() => setSocial(Social.PINS)}
                                     >
                                         {post.pinnedBy.length} pins
                                     </div>
-                                    <div
-                                        ref={refSocialComments}
-                                        className='post-right-socials-comments active'
-                                         onClick={() => switchSocial(Social.COMMENTS)}
+                                    <div className={`post-right-socials-comments ${Social.COMMENTS == social ? 'active' : ''}`}
+                                         onClick={() => setSocial(Social.COMMENTS)}
                                     >
                                         {post.comments.length} comments
                                     </div>
