@@ -1,59 +1,42 @@
-import React, { createRef, useImperativeHandle} from 'react';
+import React, { ChangeEvent, useImperativeHandle, useState } from 'react';
 
 interface IProps {
     max_chars: number
 }
 
 interface Handles {
-    counter: () => HTMLSpanElement | null,
+    getCount: () => number,
     getInput: () => string,
+    clear:    () => void,
     add: (text: string) => void,
-    clear: () => void,
 }
 
-export interface TextAreaHandles extends Handles {
-    input: () => HTMLTextAreaElement | null
-}
-export interface InputHandles extends Handles {
-    input: () => HTMLInputElement | null
-}
-
-export const TextAreaWithCounter = React.forwardRef<TextAreaHandles, IProps>((props, ref) => {
-    const inputRef = createRef<HTMLTextAreaElement>();
-    const countRef = createRef<HTMLSpanElement>();
+export const TextAreaWithCounter = React.forwardRef<Handles, IProps>((props, ref) => {
+    const [style, setStyle] = useState<string>('');
+    const [input, setInput] = useState<string>('');
+    const [count, setCount] = useState<number>(0);
 
     useImperativeHandle(ref, () => ({
-        counter () { return countRef.current; },
-        input   () { return inputRef.current; },
-        getInput () {
-            return inputRef.current ? inputRef.current.value : ''
-        },
-        clear() {
-            if (inputRef.current && countRef.current) {
-                inputRef.current.value = ''
-                update(inputRef, countRef, props.max_chars)
-            }
-        },
-        add (text) {
-            if (inputRef.current && countRef.current) {
-                inputRef.current.value += text
-                update(inputRef, countRef, props.max_chars)
-            }
-        }
-
+        getCount () { return count; },
+        getInput () { return input  },
+        clear    () { setInput('')  },
+        add  (text) { setInput(input + text) }
     }));
 
     return (
-        <div className='textarea-with-counter'>
-            <textarea
-                ref={inputRef}
-                onChange={() => update(inputRef, countRef, props.max_chars)}
-                className="textarea-with-counter-input"
+        <div className={`textarea-with-counter ${style}`}>
+            <textarea className="textarea-with-counter-input"
+                      value={input}
+                      onChange={(e) => {
+                          const value  = e.target.value;
+                          const length = value.length;
+                          setInput(value);
+                          setCount(length);
+                          setStyle(getClass(length, props.max_chars));
+                      }}
             />
-            <span
-                ref={countRef}
-                className='textarea-with-counter-counter'>
-                {props.max_chars}
+            <span className='textarea-with-counter-counter'>
+                {props.max_chars - count}
             </span>
         </div>
     )
@@ -61,74 +44,41 @@ export const TextAreaWithCounter = React.forwardRef<TextAreaHandles, IProps>((pr
 
 
 
-export const InputWithCounter = React.forwardRef<InputHandles, IProps>((props, ref) => {
-    const inputRef = createRef<HTMLInputElement>();
-    const countRef = createRef<HTMLSpanElement>();
+export const InputWithCounter = React.forwardRef<Handles, IProps>((props, ref) => {
+    const [style, setStyle] = useState<string>('');
+    const [input, setInput] = useState<string>('');
+    const [count, setCount] = useState<number>(0);
 
     useImperativeHandle(ref, () => ({
-        counter () { return countRef.current; },
-        input   () { return inputRef.current; },
-        getInput () {
-            return inputRef.current ? inputRef.current.value : ''
-        },
-        clear() {
-            if (inputRef.current && countRef.current) {
-                inputRef.current.value = ''
-                update(inputRef, countRef, props.max_chars)
-            }
-        },
-        add (text) {
-            if (inputRef.current && countRef.current) {
-                inputRef.current.value += text
-                update(inputRef, countRef, props.max_chars)
-            }
-        }
+        getCount () { return count; },
+        getInput () { return input  },
+        clear    () { setInput('')  },
+        add  (text) { setInput(input + text) }
     }));
 
     return (
-        <div className='input-with-counter'>
-            <input
-                ref={inputRef}
-                onChange={() => update(inputRef, countRef, props.max_chars)}
-                className="input-with-counter-input"
+        <div className={`input-with-counter ${style}`}>
+            <input className="input-with-counter-input"
+                   value={input}
+                   onChange={(e) => {
+                       const value  = e.target.value;
+                       const length = value.length;
+                       setInput(value);
+                       setCount(length);
+                       setStyle(getClass(length, props.max_chars));
+                   }}
             />
-            <span
-                ref={countRef}
-                className='input-with-counter-counter'>
-                {props.max_chars}
+            <span className='input-with-counter-counter'>
+                {props.max_chars - count}
             </span>
         </div>
     )
 })
 
-const update = (
-    inputRef: React.RefObject<HTMLTextAreaElement | HTMLInputElement>,
-    countRef: React.RefObject<HTMLSpanElement>,
-    max_chars: number
-) => {
-    if (countRef && countRef.current && inputRef.current && inputRef.current) {
-        const length = inputRef.current.value.length;
-        countRef.current.innerText = (max_chars - length) + '';
-
-        if (length === 0) {
-            countRef.current.style.color = 'red'
-            inputRef.current.style.boxShadow = '0px 0px 0px 1px red';
-        }
-        else if (length < max_chars * 0.10) {
-            countRef.current.style.color = 'green'
-            inputRef.current.style.boxShadow = '0px 0px 0px 1px green';
-        }
-        else if (length < max_chars * 0.50) {
-            countRef.current.style.color = 'orange'
-            inputRef.current.style.boxShadow = '0px 0px 0px 1px orange';
-        }
-        else if (length <= max_chars) {
-            countRef.current.style.color = '#c5c519'
-            inputRef.current.style.boxShadow = '0px 0px 0px 1px #c5c519';
-        }
-        else {
-            countRef.current.style.color = 'red'
-            inputRef.current.style.boxShadow = '0px 0px 0px 1px red';
-        }
-    }
+const getClass = (length: number, max_chars: number): string => {
+    if      (length === 0             )  return 'red'
+    else if (length < max_chars * 0.30)  return 'green'
+    else if (length < max_chars * 0.60)  return 'orange'
+    else if (length < max_chars * 0.90)  return 'yellow'
+    else                                 return 'red'
 }

@@ -71,3 +71,10 @@
 .invertible {
   filter: var(--filterImagePlaceholder);
 }
+
+.post-upload-input  .textarea-with-counter-input  {
+  box-shadow: 0 0 0 1px green;
+}
+.post-upload-input  .textarea-with-counter-counter  {
+  color: green;
+}

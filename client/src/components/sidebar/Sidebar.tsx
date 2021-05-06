@@ -7,6 +7,7 @@ import {FiSettings} from 'react-icons/fi'
 import { SidebarOption } from './SidebarOption';
 import { SignInButton } from './SignInButton';
 import { GiHamburgerMenu } from 'react-icons/gi'
+import { BiLogOut } from 'react-icons/bi'
 import { ImCross } from 'react-icons/im'
 
 
@@ -75,7 +76,7 @@ export const Sidebar: React.FC = () => {
                         <>
                             <SidebarOption icon={<CgProfile  />}  text='Profile'  href={`/profile/${state.currentUser.id}`} />
                             <SidebarOption icon={<FiSettings />}  text='Settings' href='/TODO' />
-                            <SidebarOption icon={<FiSettings />}  text='Logout'   href='/logout'   />
+                            <SidebarOption icon={<BiLogOut   />}  text='Logout'   href='/logout'   />
                         </>
                     ) : (
                         <SignInButton

@@ -18,6 +18,7 @@
       outline: none;
       transition: box-shadow 0.3s ease-in-out;
     }
+
   }
   &-counter {
     color: red;
@@ -58,4 +59,32 @@
     width: 40px;
   }
 
+}
+
+.red {
+  .input-with-counter-input      {box-shadow: 0 0 0 1px red}
+  .textarea-with-counter-input   {box-shadow: 0 0 0 1px red}
+  .textarea-with-counter-counter {color: red}
+  .input-with-counter-counter    {color: red}
+}
+
+.green {
+  .input-with-counter-input      {box-shadow: 0 0 0 1px green}
+  .textarea-with-counter-input   {box-shadow: 0 0 0 1px green}
+  .textarea-with-counter-counter {color: green}
+  .input-with-counter-counter    {color: green}
+}
+
+.orange {
+  .input-with-counter-input      {box-shadow: 0 0 0 1px orange}
+  .textarea-with-counter-input   {box-shadow: 0 0 0 1px orange}
+  .textarea-with-counter-counter {color: orange}
+  .input-with-counter-counter    {color: orange}
+}
+
+.yellow {
+  .input-with-counter-input      {box-shadow: 0 0 0 1px #c5c519}
+  .textarea-with-counter-input   {box-shadow: 0 0 0 1px #c5c519}
+  .textarea-with-counter-counter {color: #c5c519}
+  .input-with-counter-counter    {color: #c5c519}
 }

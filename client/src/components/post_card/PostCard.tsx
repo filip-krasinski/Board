@@ -89,7 +89,6 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
         Agent.Post.addComment(post.id, content)
             .then(res => {
                 toast.success('Comment submitted!')
-                post.comments.splice(0, 0, res)
 
                 buttonRef.current?.setLoading(false)
                 if (commentInputRef.current)
@@ -97,7 +96,10 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
 
                 setPost(old => {
                     if (old)
-                        return ({ ...old, id: 0})
+                        return ({
+                            ...old,
+                            comments: [res, ...old.comments]
+                        })
                 })
             })
             .catch(err => {
