@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
 import Store from './app/Store';
+import 'emoji-mart/css/emoji-mart.css'
 import './css/main.scss'
-
 
 ReactDOM.render(
     <Store>

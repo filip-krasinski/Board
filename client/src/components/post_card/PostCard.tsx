@@ -1,18 +1,18 @@
-import { RouteComponentProps } from 'react-router-dom'
-import Agent from '../api/Agent';
-import React, { createRef, useContext, useEffect, useState } from 'react';
-import { IPost } from '../model/IPost';
-import { toast } from 'react-toastify';
-import { BsThreeDots } from 'react-icons/bs';
-import { ButtonSubmit } from './ButtonSubmit';
-import { PostCardComment } from './post_card/PostCardComment';
-import { Context } from '../app/Store';
-import { PostCardPin } from './post_card/PostCardPin';
-import 'emoji-mart/css/emoji-mart.css'
-import { Picker } from 'emoji-mart'
+import React, { createRef, ElementRef, useContext, useEffect, useState } from 'react';
+import { TextAreaWithCounter } from '../input/InputsWithCounters';
+import { PostCardComment } from './PostCardComment';
+import { RouteComponentProps } from 'react-router-dom';
+import { PostCardPin } from './PostCardPin';
 import { Emoji } from 'emoji-mart/dist-es/utils/data';
-import useOnClickOutside from '../util/useOnClickOutside';
+import { EmojiPicker } from '../EmojiPicker';
+import { ButtonSubmit } from '../ButtonSubmit';
+import { BsThreeDots } from 'react-icons/bs';
+import { Context } from '../../app/Store';
+import { toast } from 'react-toastify';
+import { IPost } from '../../model/IPost';
+import Agent from '../../api/Agent';
 
+const COMMENT_MAX_LENGTH = process.env.REACT_APP_MAX_COMMENT_LENGTH;
 const API_URL = process.env.REACT_APP_API_URL;
 
 interface MatchParams {
@@ -24,41 +24,26 @@ enum Social {
     PINS
 }
 
-export const Post = ({ match }: RouteComponentProps<MatchParams>) => {
+export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
     const {state}              = useContext(Context);
     const [social, setSocial]  = useState<Social>(Social.COMMENTS)
     const [post, setPost]      = useState<IPost>();
-    const counterRef           = createRef<HTMLDivElement>();
     const refSocialPins        = createRef<HTMLDivElement>();
     const refSocialComments    = createRef<HTMLDivElement>();
-    const picker               = createRef<HTMLDivElement>();
-    const pickerWrapper        = createRef<HTMLDivElement>();
-    const btnRef               = createRef<HTMLButtonElement>();
-    const inputRef             = createRef<HTMLTextAreaElement>();
-
-    useOnClickOutside(pickerWrapper, () => {
-        if (picker.current)
-            picker.current.style.display = 'none'
-    });
-
-    const toggleEmojiMenu = () => {
-        if (picker.current)
-            if (picker.current.style.display === 'none')
-                picker.current.style.display = 'block'
-            else
-                picker.current.style.display = 'none'
-    }
+    const buttonRef            = createRef<ElementRef<typeof ButtonSubmit>>();
+    const commentInputRef      = createRef<ElementRef<typeof TextAreaWithCounter>>();
 
     const emojiSelected = (emoji: Emoji) => {
-        if (inputRef.current) {
+        if (commentInputRef.current) {
+            const content = commentInputRef.current.getInput();
             // @ts-ignore
             let sym = emoji.unified.split('-')
             let codesArray: any[] = []
             sym.forEach(el => codesArray.push('0x' + el))
             let finalEmoji = String.fromCodePoint(...codesArray)
-            if (inputRef.current.value.length + finalEmoji.length < 512) {
-                inputRef.current.value += finalEmoji
-                updateInput()
+
+            if (content.length + finalEmoji.length < COMMENT_MAX_LENGTH) {
+                commentInputRef.current.add(finalEmoji)
             }
         }
     }
@@ -74,13 +59,18 @@ export const Post = ({ match }: RouteComponentProps<MatchParams>) => {
         setSocial(social)
     }
 
-    const updateInput = () => {
-        if (counterRef.current && inputRef.current)
-            counterRef.current.innerText = inputRef.current.value.length + '/512';
-    }
-
     const postComment = () => {
-        const content = inputRef.current?.value;
+        const content = commentInputRef.current?.getInput();
+
+        if (!content || !content.trim().length) {
+            toast.error('Comment cannot be empty!')
+            return;
+        }
+
+        if (content.length > COMMENT_MAX_LENGTH) {
+            toast.error('Comment is too long!')
+            return;
+        }
 
         if (!state.currentUser) {
             toast.error('You must be logged in!');
@@ -92,22 +82,18 @@ export const Post = ({ match }: RouteComponentProps<MatchParams>) => {
             return;
         }
 
-        if (!content || !content.trim().length) {
-            toast.error('Comment cannot be empty!')
+        if (buttonRef.current?.isLoading())
             return;
-        }
 
-        btnRef.current?.classList.add('loading')
-
+        buttonRef.current?.setLoading(true)
         Agent.Post.addComment(post.id, content)
             .then(res => {
                 toast.success('Comment submitted!')
                 post.comments.splice(0, 0, res)
-                btnRef.current?.classList.remove('loading')
-                if (inputRef.current)
-                    inputRef.current.value = ''
-                if (counterRef.current)
-                    counterRef.current.innerText = '0/512'
+
+                buttonRef.current?.setLoading(false)
+                if (commentInputRef.current)
+                    commentInputRef.current.clear();
 
                 setPost(old => {
                     if (old)
@@ -118,7 +104,7 @@ export const Post = ({ match }: RouteComponentProps<MatchParams>) => {
                 toast.error("Failed to submit comment!");
                 console.log(err)
             })
-            .finally(() => btnRef.current?.classList.remove('loading'))
+            .finally(() => buttonRef.current?.setLoading(false))
     }
 
     useEffect(() => {
@@ -196,39 +182,16 @@ export const Post = ({ match }: RouteComponentProps<MatchParams>) => {
                                                         <img alt='' src={post.author.avatarUrl}/>
                                                     </div>
 
-                                                    <textarea
-                                                        ref={inputRef}
-                                                        onChange={() => updateInput()}
-                                                        name="comment"
-                                                        placeholder="Comment"
-                                                        maxLength={512}
-                                                        required
-                                                    />
+                                                    <div style={{width: '100%'}}>
+                                                        <TextAreaWithCounter ref={commentInputRef} max_chars={COMMENT_MAX_LENGTH} />
+                                                    </div>
 
                                                 </div>
                                                 <div className='flex-row post-right-input-submit'>
-                                                    <div ref={counterRef} className='post-right-input-counter'>
-                                                        0/512
+                                                    <div style={{marginLeft:'auto'}}>
+                                                        <ButtonSubmit ref={buttonRef} text={'Submit'} onClick={postComment} />
                                                     </div>
-                                                    <div>
-                                                        <ButtonSubmit ref={btnRef} text={'Submit'} onClick={() => postComment()} />
-                                                    </div>
-                                                    <div ref={pickerWrapper} style={{position: 'relative'}}>
-                                                        <div ref={picker} style={{display:'none'}}>
-                                                            <Picker
-                                                                exclude={['flags']}
-                                                                title=''
-                                                                showSkinTones={false}
-                                                                showPreview={false}
-                                                                onClick={(emoji) => emojiSelected(emoji)}
-                                                                style={{ position: 'absolute', bottom: '120px', right: '0', }} />
-                                                        </div>
-
-                                                        <span onClick={(e) => {
-                                                            e.preventDefault()
-                                                            toggleEmojiMenu()
-                                                        }} className='emoji'>😊</span>
-                                                    </div>
+                                                    <EmojiPicker onSelect={emojiSelected} />
                                                 </div>
                                             </div>
                                         ) : null }

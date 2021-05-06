@@ -79,19 +79,11 @@
       margin-top: auto;
       margin-bottom: 1em;
       width: auto;
-      height: 100px;
+
 
 
       &-submit {
         display: flex;
-        align-items: center;
-      }
-
-      &-counter {
-        color: var(--colorText);
-        margin-left: auto;
-        margin-right: 1em;
-        justify-content: center;
         align-items: center;
       }
 
@@ -104,22 +96,7 @@
         }
       }
 
-      textarea {
-        color: var(--colorText);
-        background: var(--colorSecondary);
-        width: 100%;
-        resize: none;
-        padding: 10px;
-        border: 0;
-        border-radius: 10px;
-        &::placeholder {
-          font-family: 'Rubik', sans-serif;
-        }
-        &:focus {
-          outline: none;
-          box-shadow: var(--commentOutline);
-        }
-      }
+
     }
 
     &-comment {
@@ -144,15 +121,30 @@
       }
 
       &-author {
+        position: relative;
         font-weight: 600;
         float: left;
 
         &:hover {
           cursor: pointer;
+          &:after {
+            width: 100%;
+          }
+        }
+        &:after {
+          content: "";
+          position: absolute;
+          left:0;
+          top: 100%;
+          width: 0;
+          height: 2px;
+          background-color: var(--commentAuthorHoverColor);
+          transition: width .3s ease-in-out;
         }
       }
 
       &-content {
+        padding-top: 2px;
         display: block;
         text-align: left;
         word-break: break-word;
@@ -186,7 +178,18 @@
         padding-bottom: 5px;
 
         &.active {
-          border-bottom: var(--socialsLineActive);
+          position: relative;
+          transition: width .3s ease-in-out;
+          &:after {
+            content: "";
+            position: absolute;
+            left:0;
+            top: 100%;
+            width: 100%;
+            height: 2px;
+            background-color: var(--commentAuthorHoverColor);
+            transition: width .3s ease-in-out;
+          }
         }
 
         &:hover {
@@ -197,7 +200,17 @@
       &-comments {
         margin-left: 1em;
         &.active {
-          border-bottom: var(--socialsLineActive);
+          position: relative;
+          &:after {
+            content: "";
+            position: absolute;
+            left:0;
+            top: 100%;
+            width: 100%;
+            height: 2px;
+            background-color: var(--commentAuthorHoverColor);
+            transition: width .3s ease-in-out;
+          }
         }
 
         &:hover {

@@ -1,5 +1,5 @@
 import React, { createRef, useContext, useState } from 'react';
-import { Context } from '../app/Store';
+import { Context } from '../../app/Store';
 import {ImGithub, ImHome} from 'react-icons/im'
 import {CgProfile} from 'react-icons/cg'
 import {IoMdAddCircle} from 'react-icons/io'
@@ -15,7 +15,7 @@ const APP_URL = process.env.REACT_APP_APP_URL;
 
 export const Sidebar: React.FC = () => {
     const {state} = useContext(Context);
-    const [isOpened, setOpened] = useState<boolean>(false)
+    const [isOpened, setOpened] = useState(false)
     const domRef = createRef<HTMLDivElement>();
     const burgerRef = createRef<HTMLDivElement>();
 

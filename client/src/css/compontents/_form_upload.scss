@@ -1,67 +1,73 @@
-.upload-form {
-  padding: 5em 10em 10em 10em;
-  border-radius: 5%;
-  box-shadow: var(--shadowPost);
-  background: var(--colorPrimary);
-
-  &_wrapper {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
-
-  &_title {
+.post {
+  &-header {
     color: var(--colorText);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     font-size: 3em;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 3em;
   }
+  &-below {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
 
-  &-input {
-
-    &_submit {
-      margin-top: 1em;
-      width: 100%;
+    @media (max-width: 1200px) {
+      margin-top: 3em;
+      flex-flow: column;
+      height: auto;
     }
+  }
+  &-upload-input {
+    width: 100%;
+    margin-top: 10px;
 
-    &_file {
+    &-text {
       color: var(--colorText);
-      border: 3px #d11141 dashed;
+      text-align: left;
+    }
+
+    &-file {
+      display: inline-block;
+      text-align: left;
+      background: var(--colorSecondary);
+      position: relative;
+      border-radius: 3px;
+      margin-top: 5px;
       cursor: pointer;
-    }
 
-    &_preview {
-      img {
-        max-width: 500px;
-        max-height: 500px;
-      }
-    }
-
-    &_title {
+      .button {
+        display: inline-block;
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 2px;
+        margin-right: 8px;
         color: var(--colorText);
-        margin-bottom: 1em;
-        position: relative;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        font-size: 18px;
-        border:  1px solid;
-        border-color: transparent transparent gray;
-        background-color: transparent;
+        background: var(--colorButtons);
+      }
+
+      .label {
+        color: var(--colorText);
+        white-space: nowrap;
+        opacity: .3;
+      }
+
+      input {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-
-      &:focus{
-        outline: none;
-      }
-
-      &::placeholder {
-        color: var(--colorText);
-        opacity: 1;
+        height: 100%;
+        opacity: 0;
+        z-index: 10;
+        cursor: pointer;
       }
     }
-
   }
+}
 
+.invertible {
+  filter: var(--filterImagePlaceholder);
 }

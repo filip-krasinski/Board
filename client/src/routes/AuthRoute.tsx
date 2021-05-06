@@ -7,22 +7,19 @@ export const AuthRoute = ({ component: Component, ...rest }) => {
     const {state} = useContext(Context);
 
     return (
+        <Store>
         <Route
             {...rest}
             render={props =>
                 state.currentUser ? (
-                    <Store>
-                        <Component {...rest} {...props} />
-                    </Store>
+                    <Component {...rest} {...props} />
                 ) : (
-                    <Store>
-                        <Redirect to={{
-                            pathname: '/',
-                            state: {from: props.location}
-                        }}/>
-                    </Store>
-
+                    <Redirect to={{
+                        pathname: '/',
+                        state: {from: props.location}
+                    }}/>
             )}
         />
+        </Store>
     )
 };
