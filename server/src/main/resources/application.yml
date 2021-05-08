@@ -21,7 +21,7 @@ spring:
             clientSecret: {yourclientsecret}
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
-              - user:email
+              - user
               - read:user
 
 app:
