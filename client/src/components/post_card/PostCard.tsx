@@ -1,7 +1,7 @@
 import React, { createRef, ElementRef, useContext, useEffect, useState } from 'react';
 import { TextAreaWithCounter } from '../input/InputsWithCounters';
 import { PostCardComment } from './PostCardComment';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { PostCardPin } from './PostCardPin';
 import { Emoji } from 'emoji-mart/dist-es/utils/data';
 import { EmojiPicker } from '../EmojiPicker';
@@ -25,9 +25,11 @@ enum Social {
 }
 
 export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
+    const history              = useHistory();
     const {state}              = useContext(Context);
-    const [social, setSocial]  = useState<Social>(Social.COMMENTS)
+    const [social, setSocial]  = useState(Social.COMMENTS)
     const [post, setPost]      = useState<IPost>();
+    const [utilMenuActive, setUtilMenuActive] = useState(false);
     const buttonRef            = createRef<ElementRef<typeof ButtonSubmit>>();
     const commentInputRef      = createRef<ElementRef<typeof TextAreaWithCounter>>();
 
@@ -46,6 +48,24 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
         }
     }
 
+    const deletePost = () => {
+        if (!post) {
+            toast.error('Missing reference to post, try to refresh the page');
+            return;
+        }
+
+        Agent.Post.delete(post.id + '')
+            .then(() => {
+                history.push('/');
+                toast.success('Post deleted!');
+            })
+            .catch(err => {
+                toast.error('Failed to delete post!');
+                console.log(err);
+            })
+
+    }
+
     const postComment = () => {
         const content = commentInputRef.current?.getInput();
 
@@ -59,11 +79,6 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
             return;
         }
 
-        if (!state.currentUser) {
-            toast.error('You must be logged in!');
-            return;
-        }
-
         if (!post) {
             toast.error('Missing reference to post, try to refresh the page');
             return;
@@ -73,7 +88,7 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
             return;
 
         buttonRef.current?.setLoading(true)
-        Agent.Post.addComment(post.id, content)
+        Agent.Comment.add(post.id, content)
             .then(res => {
                 toast.success('Comment submitted!')
 
@@ -129,7 +144,23 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
                                         <div className='post-right-author-name'>{post.author.name}</div>
                                     </div>
 
-                                    <div className='post-right-dots'><BsThreeDots/></div>
+                                    <div className='post-right-dots'
+                                        onClick={() => setUtilMenuActive(!utilMenuActive)}
+                                    >
+                                        <BsThreeDots/>
+                                        {utilMenuActive && (
+                                            <div className='post-right-dots-menu-wrapper'>
+                                                <div className='flex-column post-right-dots-menu'>
+                                                    <span className='flex-column post-right-dots-menu-item'>Download</span>
+                                                    {post.author.id === state.currentUser?.id && (
+                                                        <span className='flex-column post-right-dots-menu-item'
+                                                            onClick={deletePost}
+                                                        >Delete</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className='flex-row'>
@@ -139,12 +170,12 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
                                 </div>
 
                                 <div className='flex-row post-right-socials'>
-                                    <div className={`post-right-socials-pins ${Social.PINS == social ? 'active' : ''}`}
+                                    <div className={`post-right-socials-pins ${Social.PINS === social ? 'active' : ''}`}
                                         onClick={() => setSocial(Social.PINS)}
                                     >
                                         {post.pinnedBy.length} pins
                                     </div>
-                                    <div className={`post-right-socials-comments ${Social.COMMENTS == social ? 'active' : ''}`}
+                                    <div className={`post-right-socials-comments ${Social.COMMENTS === social ? 'active' : ''}`}
                                          onClick={() => setSocial(Social.COMMENTS)}
                                     >
                                         {post.comments.length} comments
@@ -159,7 +190,12 @@ export const PostCard = ({ match }: RouteComponentProps<MatchParams>) => {
                                 ) : (
                                     <>
                                         <div className='flex-column post-right-comment-list'>
-                                            {post.comments.map((com) => <PostCardComment key={com.id} comment={com}/>)}
+                                            {post.comments.map((com) => <PostCardComment
+                                                key={com.id}
+                                                post={post}
+                                                setPost={setPost}
+                                                comment={com}/>
+                                            )}
                                         </div>
                                         {state.currentUser ? (
                                             <div className='flex-column post-right-input'>

@@ -6,6 +6,8 @@ export interface IPost {
     title: string,
     uploadTime: Date,
     imagePath: string,
+    imageHeight: number,
+    imageWidth: number,
     author: IAuthUser,
     comments: IComment[]
     pinnedBy: IAuthUser[]

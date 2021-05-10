@@ -80,8 +80,6 @@
       margin-bottom: 1em;
       width: auto;
 
-
-
       &-submit {
         display: flex;
         align-items: center;
@@ -108,6 +106,12 @@
         background: var(--colorSecondary);
         border-radius: 16px;
         padding: 0.5em;
+
+        &:hover {
+          .post-right-comment-dots {
+            opacity: 1;
+          }
+        }
       }
 
       &-list {
@@ -144,6 +148,7 @@
       }
 
       &-content {
+        padding-bottom: 10px;
         padding-top: 2px;
         display: block;
         text-align: left;
@@ -153,6 +158,33 @@
       &-time {
         padding-left: 1em;
         display: flex;
+      }
+
+      &-dots {
+        text-align: right;
+        margin-left: auto;
+        width: 50px;
+        opacity: 0;
+        transition: opacity .3s;
+        cursor: pointer;
+        position: relative;
+        user-select: none;
+
+        &-menu {
+          width: 100px;
+          text-align: left;
+          font-weight: 500;
+
+          &-wrapper {
+            right: 30px;
+            top: 0;
+            position: absolute;
+            background: var(--colorSecondary);
+            box-shadow: var(--shadowPost);
+            padding: 10px;
+            border-radius: 16px;
+          }
+        }
       }
 
       &-avatar {
@@ -250,12 +282,38 @@
       color: var(--colorText);
       margin-left: auto;
       font-size: 1.5em;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+
+      &-menu {
+        text-align: left;
+        font-weight: 700;
+
+        &-wrapper {
+          width: 200px;
+          right: 10px;
+          position: absolute;
+          background: var(--colorPrimary);
+          padding: 10px;
+          box-shadow: var(--shadowPost);
+          border-radius: 16px;
+        }
+
+        &-item {
+
+          &:hover {
+            background: var(--colorSecondary);
+          }
+        }
+      }
     }
 
     &-title {
       color: var(--colorText);
       margin-top: 0.175em;
-      font-size: 2.5rem;
+      font-size: 1.5rem;
+      text-align: left;
       font-weight: 600;
       overflow:hidden;
       word-break: break-word;

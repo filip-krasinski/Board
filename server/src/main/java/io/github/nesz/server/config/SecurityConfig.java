@@ -1,9 +1,7 @@
 package io.github.nesz.server.config;
 
-
-import io.github.nesz.server.security.*;
-import io.github.nesz.server.security.jwt.JwtTokenAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.nesz.server.authentication.*;
+import io.github.nesz.server.models.user.details.UserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,8 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -27,50 +23,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomUserDetailsService customUserDetailsService;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final UserDetailsService userDetailsService;
+    private final OAuth2UserService oAuth2UserService;
+    private final AuthenticationTokenFilter authenticationTokenFilter;
+    private final OAuth2AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler authenticationFailureHandler;
+    private final OAuth2AuthorizationRequestRepository authenticationRequestRepository;
 
-    @Autowired
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          CustomOAuth2UserService customOAuth2UserService,
-                          OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-                          OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
-        this.customUserDetailsService = customUserDetailsService;
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
-        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+    public SecurityConfig(OAuth2UserService oAuth2UserService,
+                          UserDetailsService userDetailsService,
+                          AuthenticationTokenFilter authenticationTokenFilter,
+                          OAuth2AuthenticationSuccessHandler authenticationSuccessHandler,
+                          OAuth2AuthenticationFailureHandler authenticationFailureHandler,
+                          OAuth2AuthorizationRequestRepository authenticationRequestRepository
+    ) {
+        this.oAuth2UserService  = oAuth2UserService;
+        this.userDetailsService = userDetailsService;
+        this.authenticationTokenFilter = authenticationTokenFilter;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
+        this.authenticationRequestRepository = authenticationRequestRepository;
     }
-
-    @Bean
-    public JwtTokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new JwtTokenAuthenticationFilter();
-    }
-
-
-    /*
-      By default, Spring OAuth2 uses HttpSessionOAuth2AuthorizationRequestRepository to save
-      the authorization request. But, since our service is stateless, we can't save it in
-      the session. We'll save the request in a Base64 encoded cookie instead.
-    */
-    @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
-    
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -79,68 +52,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.userDetailsService(userDetailsService);
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors()
-                    .and()
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
+            .cors()
+            .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
                 .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
-
                 .exceptionHandling()
-                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                    .and()
-                .authorizeRequests()
-                    .antMatchers("/",
-                        "/error",
-                        "/favicon.ico",
-                        "/**/*.png",
-                        "/**/*.gif",
-                        "/**/*.svg",
-                        "/**/*.jpg",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js")
-                        .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**")
-                        .permitAll()
-                    .antMatchers(
-                        "/v3/api-docs**",
-                        "/swagger-ui/**",
-                        "/swagger**",
-                        "/swagger-resources/**",
-                        "/swagger-ui.html",
-                        "/v2/api-docs",
-                        "/webjars/**",
-                        "/img/**"
-                        )
-                        .permitAll()
-                    .antMatchers(
-                        "/post*",
-                        "/post/get*"
-                    )
-                        .permitAll()
-                    .anyRequest()
-                        .authenticated()
-                    .and()
+                .authenticationEntryPoint(new AuthenticationEntryPoint())
+            .and()
                 .oauth2Login()
-                    .authorizationEndpoint()
-                        .baseUri("/oauth2/authorize")
-                        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                        .and()
-                    .redirectionEndpoint()
-                        .baseUri("/oauth2/callback/*")
-                        .and()
-                    .userInfoEndpoint()
-                        .userService(customOAuth2UserService)
-                        .and()
-                    .successHandler(oAuth2AuthenticationSuccessHandler)
-                    .failureHandler(oAuth2AuthenticationFailureHandler);
+                .authorizationEndpoint().baseUri("/oauth2/authorize")
+                .authorizationRequestRepository(authenticationRequestRepository)
+            .and().redirectionEndpoint()
+                    .baseUri("/oauth2/callback/*")
+            .and()
+                .userInfoEndpoint()
+                .userService(oAuth2UserService)
+            .and()
+                .successHandler(authenticationSuccessHandler)
+                .failureHandler(authenticationFailureHandler);
 
-        // Add our custom Token based authentication filter
-        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

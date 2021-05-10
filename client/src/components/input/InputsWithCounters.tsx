@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useImperativeHandle, useState } from 'react';
+import React, { useImperativeHandle, useState } from 'react';
 
 interface IProps {
     max_chars: number

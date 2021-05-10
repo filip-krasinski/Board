@@ -19,31 +19,38 @@ axios.interceptors.request.use((config) => {
 
 const responseBody = (response: AxiosResponse) => response.data;
 const requests = {
-    get: (url: string) => axios.get(url).then(responseBody),
-    post: (url: string, params: any) => axios.post(url, null, {params: params}).then(responseBody),
+    get:       (url: string) => axios.get(url).then(responseBody),
+    post:      (url: string, params: any) => axios.post(url, null, {params: params}).then(responseBody),
+    delete:    (url: string, params: any) => axios.delete(url, {params: params}).then(responseBody),
     getParams: (url: string, params: any) => axios.get(url, {params: params}).then(responseBody),
-    postForm: (url: string, data: FormData) => axios.post(url, data).then(responseBody),
+    postForm:  (url: string, data: FormData) => axios.post(url, data).then(responseBody),
 
 }
 
 const User = {
-    current: (): Promise<IAuthUser> => requests.get('/user/me'),
-    get: (id: string): Promise<IAuthUser> => requests.getParams('/user', {id: id}),
-    pin: (postId: number) => requests.post('/user/pin', {postId: postId}),
-    unpin: (postId: number) => requests.post('/user/unpin', {postId: postId}),
+    current: (): Promise<IAuthUser> => requests.get('/v1/user/me'),
+    get: (id: string): Promise<IAuthUser> => requests.getParams('/v1/user/get', {id: id}),
+    pin: (postId: number) => requests.post('/v1/user/pin', {postId: postId}),
+    unpin: (postId: number) => requests.post('/v1/user/unpin', {postId: postId}),
 }
 
 const Post = {
-    upload: (data: FormData): Promise<IPost> => requests.postForm('/post/add', data),
-    get: (id: string): Promise<IPost> => requests.getParams('/post', {id: id}),
+    add: (data: FormData): Promise<IPost> => requests.postForm('/v1/post/add', data),
+    get: (id: string): Promise<IPost> => requests.getParams('/v1/post/get', {id: id}),
+    delete: (id: string) => requests.delete('/v1/post/delete', {id: id}),
     getList: (page: number, size: number): Promise<IPaged<IPost>> =>
-        axios.get('/post/get', {params: {pageNumber: page, pageSize: size}}).then(res => res.data),
-    addComment: (postId: number, content: string): Promise<IComment> =>
-        requests.post('/post/comments/add', {postId: postId, content: content})
+        axios.get('/v1/post/list', {params: {pageNumber: page, pageSize: size}}).then(res => res.data),
+
 }
 
+const Comment = {
+    delete: (id: string) => requests.delete('/v1/comment/delete', {id: id}),
+    add: (postId: number, content: string): Promise<IComment> =>
+        requests.post('/v1/comment/add', {postId: postId, content: content})
+}
 
 export default {
     User,
-    Post
+    Post,
+    Comment
 };

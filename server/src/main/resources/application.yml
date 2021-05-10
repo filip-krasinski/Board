@@ -24,6 +24,11 @@ spring:
               - user
               - read:user
 
+server:
+  compression:
+
+    enabled: true
+
 app:
   auth:
     # Secret token used to generate JWT tokens
@@ -36,4 +41,4 @@ app:
     # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
     # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
-      - http://localhost:3001/oauth2/redirect
+      - http://localhost:3000/oauth2/redirect

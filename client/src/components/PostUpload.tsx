@@ -61,7 +61,7 @@ export const PostUpload = () => {
         formData.append('file', file)
         formData.append('title', title)
 
-        Agent.Post.upload(formData)
+        Agent.Post.add(formData)
             .then(res => {
                 toast.success('Pin uploaded!')
                 history.push(`/post/${res.id}`)
